@@ -1,1 +1,1 @@
-web: gunicorn proyecto_UCC.wsgi --log-file - 
+web: gunicorn proyecto_UCC.wsgi 
