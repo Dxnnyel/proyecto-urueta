@@ -106,8 +106,10 @@ EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST          = 'smtp.gmail.com'
 EMAIL_PORT          = 587
 EMAIL_USE_TLS       = True
-EMAIL_HOST_USER     = 'danielpereiralopez3@gmail.com'     
-EMAIL_HOST_PASSWORD = 'zhag psjc umpy zmjj'       
+EMAIL_USE_SSL       = False
+EMAIL_TIMEOUT       = 30
+EMAIL_HOST_USER     = os.environ.get('EMAIL_HOST_USER', 'danielpereiralopez3@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'zhag psjc umpy zmjj')
 DEFAULT_FROM_EMAIL  = 'Urueta & Urueta <danielpereiralopez3@gmail.com>'
 
 
