@@ -1,0 +1,108 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Registrar Salida — Urueta & Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-wrap{max-width:620px;margin:2.5rem auto;padding:0 1rem}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:2rem}
+  .card-form{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .card-section{padding:1.5rem 2rem;border-bottom:1px solid var(--borde)}
+  .card-section:last-child{border-bottom:none}
+  .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+  .section-label i{color:var(--rojo)}
+  .stock-badge{display:inline-block;background:rgba(72,199,142,.1);border:1px solid rgba(72,199,142,.25);border-radius:4px;padding:2px 8px;font-size:11px;color:#48c78e;margin-left:.5rem}
+  .stock-bajo{background:rgba(215,43,43,.1);border-color:rgba(215,43,43,.25);color:#ff6b6b}
+  .card-footer{padding:1.25rem 2rem;background:var(--carbon-2,#141414);display:flex;justify-content:space-between;gap:.75rem}
+  select.form-control{appearance:auto}
+</style>
+
+<div class="page-wrap">
+  <div class="page-title"><i class="fas fa-arrow-up me-2" style="color:var(--rojo)"></i>Registrar Salida</div>
+  <div class="page-sub">Registra los repuestos usados en un servicio. Esto descuenta el stock y genera el comprobante del cliente.</div>
+
+  <div class="card-form">
+    <form method="POST" action="{% url 'registrar_salida' %}">
+      {% csrf_token %}
+
+      <div class="card-section">
+        <div class="section-label"><i class="fas fa-box-open"></i> Producto</div>
+        <div class="mb-3">
+          <label class="form-label">Selecciona el repuesto usado</label>
+          <select class="form-control" name="producto_id" id="selectProducto" required>
+            <option value="">-- Selecciona un producto --</option>
+            {% for p in productos %}
+            <option value="{{ p.pk }}" data-stock="{{ p.cantidad }}">
+              {{ p.nombre }} — Stock: {{ p.cantidad }} uds
+            </option>
+            {% endfor %}
+          </select>
+          <div id="stockInfo" style="margin-top:6px;font-size:12px;display:none">
+            Stock disponible: <span id="stockNum" style="font-weight:700;color:#48c78e"></span> unidades
+          </div>
+        </div>
+        <div class="mb-0">
+          <label class="form-label">Cantidad utilizada</label>
+          <input type="number" class="form-control" name="cantidad"
+                 id="inputCantidad" placeholder="1" min="1" required>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <div class="section-label"><i class="fas fa-car"></i> Vehículo y servicio</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Placa del vehículo</label>
+            <input type="text" class="form-control" name="placa"
+                   placeholder="ABC123" maxlength="6"
+                   oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tipo de servicio</label>
+            <select class="form-control" name="servicio">
+              <option value="">-- Selecciona --</option>
+              <option value="mecanica">Mecánica</option>
+              <option value="electrico">Eléctrico</option>
+              <option value="aire">Aire Acondicionado</option>
+              <option value="latoneria">Latonería</option>
+              <option value="pintura">Pintura</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-3">
+          <label class="form-label">Observaciones <span style="color:var(--texto-3)">(opcional)</span></label>
+          <textarea class="form-control" name="observacion" rows="2"
+                    placeholder="Detalle del uso del repuesto..."></textarea>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <a href="{% url 'inventario' %}" class="btn-uu btn-uu-outline">Cancelar</a>
+        <button type="submit" class="btn-uu btn-uu-red">
+          <i class="fas fa-check me-2"></i>Registrar salida
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const sel = document.getElementById('selectProducto');
+const stockInfo = document.getElementById('stockInfo');
+const stockNum  = document.getElementById('stockNum');
+const inputCantidad = document.getElementById('inputCantidad');
+
+sel.addEventListener('change', function(){
+  const opt = this.options[this.selectedIndex];
+  const stock = parseInt(opt.dataset.stock || 0);
+  if(this.value){
+    stockInfo.style.display = 'block';
+    stockNum.textContent = stock;
+    stockNum.style.color = stock < 5 ? '#ff6b6b' : '#48c78e';
+    inputCantidad.max = stock;
+  } else {
+    stockInfo.style.display = 'none';
+  }
+});
+</script>
+{% endblock %}

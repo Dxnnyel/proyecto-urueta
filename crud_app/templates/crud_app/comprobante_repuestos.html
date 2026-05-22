@@ -1,0 +1,83 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Comprobante — {{ placa }}{% endblock %}
+
+{% block content %}
+<style>
+  .comprobante{max-width:680px;margin:2rem auto;padding:0 1rem}
+  .comp-card{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .comp-header{background:var(--carbon-2,#141414);border-bottom:1px solid var(--borde);padding:1.75rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+  .comp-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:#fff}
+  .comp-logo span{color:var(--rojo)}
+  .comp-sub{font-size:12px;color:var(--texto-2)}
+  .placa-big{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;letter-spacing:.15em;color:#fff}
+  .comp-body{padding:1.75rem 2rem}
+  .comp-title{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);margin-bottom:1rem;font-weight:700}
+  .rep-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid var(--borde);gap:1rem}
+  .rep-row:last-child{border-bottom:none}
+  .rep-nombre{font-weight:600;font-size:14px;color:#fff}
+  .rep-detalle{font-size:12px;color:var(--texto-2);margin-top:2px}
+  .rep-cantidad{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--rojo);flex-shrink:0}
+  .comp-footer{background:var(--carbon-2,#141414);border-top:1px solid var(--borde);padding:1.25rem 2rem;text-align:center;font-size:12px;color:var(--texto-2)}
+  .empty-state{text-align:center;padding:3rem;color:var(--texto-2)}
+  @media print {
+    .navbar-urueta,.topbar,.site-footer,.no-print{display:none!important}
+    .comprobante{margin:0;padding:0;max-width:100%}
+    .comp-card{border:1px solid #ccc;border-radius:0}
+    body{background:#fff;color:#000}
+    .comp-logo,.placa-big,.rep-nombre{color:#000!important}
+    .comp-sub,.rep-detalle,.comp-footer{color:#555!important}
+  }
+</style>
+
+<div class="comprobante">
+  <div class="comp-card">
+    <div class="comp-header">
+      <div>
+        <div class="comp-logo">Urueta <span>&</span> Urueta</div>
+        <div class="comp-sub">Mecánica Automotriz · Montería, Córdoba</div>
+        <div class="comp-sub">Calle 39 #1B-81 · 300 351 8699</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--texto-2);margin-bottom:4px">Vehículo</div>
+        <div class="placa-big">{{ placa }}</div>
+      </div>
+    </div>
+
+    <div class="comp-body">
+      <div class="comp-title">Repuestos utilizados</div>
+
+      {% if movimientos %}
+        {% for m in movimientos %}
+        <div class="rep-row">
+          <div>
+            <div class="rep-nombre">{{ m.producto.nombre }}</div>
+            <div class="rep-detalle">
+              {{ m.fecha|date:"d/m/Y" }}
+              {% if m.get_servicio_display %} · {{ m.get_servicio_display }}{% endif %}
+              {% if m.observacion %} · {{ m.observacion }}{% endif %}
+            </div>
+          </div>
+          <div class="rep-cantidad">{{ m.cantidad }} uds</div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-box-open" style="font-size:40px;display:block;margin-bottom:1rem;color:var(--texto-3)"></i>
+          No hay repuestos registrados para esta placa todavía.
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="comp-footer">
+      Documento generado por el sistema de gestión de Urueta & Urueta · {{ placa }}
+    </div>
+  </div>
+
+  <div class="no-print" style="display:flex;gap:.75rem;justify-content:center;margin-top:1.25rem">
+    <button onclick="window.print()" class="btn-uu btn-uu-red">
+      <i class="fas fa-print me-2"></i>Imprimir / Guardar PDF
+    </button>
+    <a href="javascript:history.back()" class="btn-uu btn-uu-outline">Volver</a>
+  </div>    
+</div>
+{% endblock %}

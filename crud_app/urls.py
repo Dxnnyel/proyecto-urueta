@@ -1,0 +1,33 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.inicio, name='inicio'),
+    path('home/', views.home, name='home'),
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
+    path('registrarse/', views.register_user, name='register'),
+    path('verificar/', views.verificar_codigo, name='verificar_codigo'),
+    path('reenviar-codigo/', views.reenviar_codigo, name='reenviar_codigo'),
+    path('usuario/', views.dashboard, name='dashboard'),
+    path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
+    path('inventario/', views.inventario, name='inventario'),
+    path('inventario/salida/', views.registrar_salida,  name='registrar_salida'),
+    path('inventario/reporte/', views.reporte_movimientos, name='reporte_movimientos'),
+    path('productos/', views.lista_productos, name='lista_productos'),
+    path('productos/crear/', views.crear_producto, name='crear_producto'),
+    path('productos/actualizar/<int:pk>/', views.actualizar_producto, name='actualizar_producto'),
+    path('productos/eliminar/<int:pk>/', views.eliminar_producto, name='eliminar_producto'),
+    path('vehiculos/crear/', views.crear_vehiculo, name='crear_vehiculo'),
+    path('vehiculos/buscar/', views.buscar_vehiculo, name='buscar_vehiculo'),
+    path('vehiculos/historial/', views.historial_vehiculos, name='historial_vehiculos'),
+    path('solicitudes/nueva/', views.nueva_solicitud, name='nueva_solicitud'),
+    path('solicitudes/mis/', views.mis_solicitudes, name='mis_solicitudes'),
+    path('solicitudes/responder/<int:pk>/', views.responder_reprogramacion, name='responder_reprogramacion'),
+    path('panel/solicitudes/', views.admin_solicitudes, name='admin_solicitudes'),
+    path('panel/solicitudes/gestionar/<int:pk>/', views.admin_gestionar_solicitud, name='admin_gestionar_solicitud'),
+    path('panel/solicitudes/<int:pk>/repuestos/', views.agregar_repuesto_solicitud, name='agregar_repuesto_solicitud'),
+    path('panel/solicitudes/<int:pk>/cerrar/', views.cerrar_servicio, name='cerrar_servicio'),
+    path('panel/solicitudes/repuesto/<int:pk>/eliminar/', views.eliminar_repuesto_solicitud, name='eliminar_repuesto_solicitud'),
+    path('comprobante/<str:placa>/', views.comprobante_repuestos, name='comprobante_repuestos'),
+]

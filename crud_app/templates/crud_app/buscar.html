@@ -1,0 +1,100 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Buscar por placa — Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:1.75rem}
+  .card-block{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden;margin-bottom:1.5rem}
+  .card-header-uu{padding:1rem 1.5rem;border-bottom:1px solid var(--borde);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2)}
+  .sol-row{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1.5rem;border-bottom:1px solid var(--borde);gap:1rem;flex-wrap:wrap}
+  .sol-row:last-child{border-bottom:none}
+  .placa-tag{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.1em;color:#fff}
+  .sol-meta{font-size:12px;color:var(--texto-2);margin-top:2px}
+  .badge-estado{font-size:10px;font-weight:600;padding:3px 10px;border-radius:99px;text-transform:uppercase}
+  .badge-espera{background:rgba(240,196,64,.1);color:#f0c040}
+  .badge-agendada{background:rgba(72,199,142,.1);color:#48c78e}
+  .badge-confirmada{background:rgba(79,195,247,.1);color:#4fc3f7}
+  .badge-reprogramada{background:rgba(255,140,0,.1);color:#ff8c00}
+  .badge-rechazada{background:rgba(215,43,43,.1);color:#ff6b6b}
+  .badge-terminada{background:rgba(240,196,64,.1);color:#f0c040}
+  .rep-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1.5rem;border-bottom:1px solid var(--borde);gap:1rem}
+  .rep-row:last-child{border-bottom:none}
+  .rep-nombre{font-weight:600;font-size:14px;color:#fff}
+  .rep-detalle{font-size:12px;color:var(--texto-2);margin-top:2px}
+  .rep-cantidad{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--rojo);flex-shrink:0}
+  .empty-state{text-align:center;padding:2.5rem;color:var(--texto-2)}
+  .empty-state i{font-size:36px;display:block;margin-bottom:.75rem;color:var(--texto-3)}
+</style>
+
+<div class="page-title"><i class="fas fa-search me-2" style="color:var(--rojo)"></i>Buscar por placa</div>
+<p class="page-sub">Consulta el historial de solicitudes y repuestos usados de cualquier vehículo.</p>
+
+<form method="GET" style="display:flex;gap:.75rem;margin-bottom:1.75rem;max-width:480px">
+  <input type="text" name="q" value="{{ query }}" class="form-control"
+    placeholder="Ej: AAA111"
+    oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+  <button type="submit" class="btn-uu btn-uu-red" style="white-space:nowrap">
+    <i class="fas fa-search me-1"></i> Buscar
+  </button>
+</form>
+
+{% if query %}
+
+  <!-- Solicitudes -->
+  <div class="card-block">
+    <div class="card-header-uu"><i class="fas fa-calendar me-2" style="color:var(--rojo)"></i>Solicitudes de servicio</div>
+    {% if solicitudes %}
+      {% for s in solicitudes %}
+      <div class="sol-row">
+        <div>
+          <div class="placa-tag">{{ s.placa }}</div>
+          <div class="sol-meta">
+            {{ s.get_servicio_display }} · {{ s.nombre }} · {{ s.fecha_pedida }}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span class="badge-estado badge-{{ s.estado }}">{{ s.get_estado_display }}</span>
+          {% if s.estado in 'agendada,confirmada,terminada' %}
+          <a href="{% url 'agregar_repuesto_solicitud' s.pk %}" style="font-size:12px;color:#4fc3f7">
+            <i class="fas fa-boxes-stacked me-1"></i>Repuestos
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-calendar-xmark"></i>
+        No hay solicitudes para la placa <strong style="color:#fff">{{ query }}</strong>.
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Repuestos usados -->
+  <div class="card-block">
+    <div class="card-header-uu"><i class="fas fa-boxes-stacked me-2" style="color:var(--rojo)"></i>Repuestos utilizados</div>
+    {% if repuestos %}
+      {% for m in repuestos %}
+      <div class="rep-row">
+        <div>
+          <div class="rep-nombre">{{ m.producto.nombre }}</div>
+          <div class="rep-detalle">
+            {{ m.fecha|date:"d/m/Y H:i" }}
+            {% if m.observacion %} · {{ m.observacion }}{% endif %}
+            {% if m.solicitud %} · Servicio #{{ m.solicitud.pk }}{% endif %}
+          </div>
+        </div>
+        <div class="rep-cantidad">{{ m.cantidad }} uds</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-box-open"></i>
+        No hay repuestos registrados para la placa <strong style="color:#fff">{{ query }}</strong>.
+      </div>
+    {% endif %}
+  </div>
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Registro — Urueta & Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .auth-wrap {
+    min-height: calc(100vh - 200px);
+    display: flex; align-items: center; justify-content: center; padding: 2rem 0;
+  }
+  .auth-card {
+    background: var(--gris-2); border: 1px solid var(--borde);
+    border-radius: 8px; width: 100%; max-width: 480px; overflow: hidden;
+  }
+  .auth-header {
+    background: var(--gris-1); border-bottom: 1px solid var(--borde);
+    padding: 1.75rem 2rem 1.5rem; text-align: center;
+  }
+  .auth-icon {
+    width: 56px; height: 56px; background: rgba(215,43,43,0.12);
+    border: 1px solid rgba(215,43,43,0.3); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto .9rem;
+  }
+  .auth-icon i { color: var(--rojo); font-size: 22px; }
+  .auth-header h2 {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 24px;
+    text-transform: uppercase; letter-spacing: 1px; color: #fff; margin-bottom: .2rem;
+  }
+  .auth-header p { color: var(--texto-2); font-size: 13px; }
+  .auth-body { padding: 1.75rem 2rem; }
+  .auth-footer {
+    text-align: center; padding: 1.1rem 2rem; border-top: 1px solid var(--borde);
+    font-size: 13px; color: var(--texto-2);
+  }
+  .auth-footer a { color: var(--rojo); text-decoration: none; }
+  .auth-footer a:hover { text-decoration: underline; }
+  .rol-selector { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 1.5rem; max-width: 220px; margin-left: auto; margin-right: auto; }
+  .rol-btn {
+    background: var(--gris-3); border: 2px solid var(--gris-4); border-radius: 6px;
+    padding: 1rem; text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
+  }
+  .rol-btn:hover { border-color: var(--texto-2); }
+  .rol-btn.selected-cliente { border-color: #4fc3f7; background: rgba(79,195,247,.07); }
+  .rol-btn.selected-admin   { border-color: var(--rojo); background: rgba(215,43,43,.07); }
+  .rol-btn i { font-size: 26px; margin-bottom: .5rem; display: block; }
+  .rol-btn.selected-cliente i { color: #4fc3f7; }
+  .rol-btn.selected-admin   i { color: var(--rojo); }
+  .rol-btn strong {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 15px;
+    text-transform: uppercase; display: block; color: #fff; margin-bottom: .2rem;
+  }
+  .rol-btn small { font-size: 11px; color: var(--texto-2); }
+  .aviso-admin {
+    display: none; background: rgba(215,43,43,.08); border: 1px solid rgba(215,43,43,.3);
+    border-radius: 5px; padding: .9rem 1rem; margin-bottom: 1rem;
+    font-size: 13px; color: #ff9090;
+  }
+</style>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon"><i class="fas fa-user-plus"></i></div>
+      <h2>Crear Cuenta</h2>
+      <p>Elige cómo quieres registrarte</p>
+    </div>
+    <div class="auth-body">
+      <p style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);margin-bottom:.8rem;">
+        Tipo de cuenta
+      </p>
+      <div class="rol-selector">
+        <div class="rol-btn" id="btnCliente" onclick="seleccionarRol('cliente')" >
+          <i class="fas fa-user"></i>
+          <strong>Cliente</strong>
+          <small>Solicitud de servicios y seguimiento de tu vehículo</small>
+        </div>
+      </div>
+
+
+      <form method="POST" id="formRegistro" style="display:none;">
+        {% csrf_token %}
+        <input type="hidden" name="rol" id="campoRol" value="cliente">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Nombre de usuario</label>
+            <input type="text" class="form-control" name="username" placeholder="sin espacios ni tildes" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" name="email" placeholder="tu@correo.com" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Contraseña</label>
+            <input type="password" class="form-control" name="password1" placeholder="••••••" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Confirmar</label>
+            <input type="password" class="form-control" name="password2" placeholder="••••••" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-uu btn-uu-red w-100 mt-4" id="btnSubmit">
+          <i class="fas fa-check me-2"></i> Crear cuenta como Cliente
+        </button>
+        <button type="button" onclick="volverRol()"
+          style="background:transparent;border:none;color:var(--texto-2);font-size:13px;margin-top:.75rem;cursor:pointer;display:block;text-align:center;width:100%;">
+          <i class="fas fa-arrow-left me-1"></i> volver
+        </button>
+      </form>
+    </div>
+    <div class="auth-footer">
+      ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function seleccionarRol(rol) {
+  document.getElementById('campoRol').value = rol;
+  document.getElementById('btnCliente').className = 'rol-btn selected-cliente';
+  document.getElementById('formRegistro').style.display = 'block';
+  document.getElementById('btnSubmit').innerHTML = '<i class="fas fa-check me-2"></i> Crear cuenta';
+}
+function volverRol() {
+  document.getElementById('formRegistro').style.display = 'none';
+  document.getElementById('avisoAdmin').style.display   = 'none';
+  document.getElementById('btnCliente').className = 'rol-btn';
+  document.getElementById('btnAdmin').className   = 'rol-btn';
+}
+</script>
+{% endblock %}

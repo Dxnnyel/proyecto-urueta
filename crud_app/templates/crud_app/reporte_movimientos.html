@@ -1,0 +1,117 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Reporte de Movimientos — Urueta & Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:1.5rem}
+  .filtro-bar{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+  .filtro-bar label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-2);display:block;margin-bottom:4px}
+  .resumen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+  .res-card{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;padding:1.25rem 1.5rem}
+  .res-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-2);margin-bottom:.4rem}
+  .res-value{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;color:#fff}
+  .badge-entrada{background:rgba(72,199,142,.12);color:#48c78e;border:1px solid rgba(72,199,142,.3);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+  .badge-salida{background:rgba(215,43,43,.12);color:#ff6b6b;border:1px solid rgba(215,43,43,.3);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+  .tabla-wrap{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .placa-tag{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.08em}
+  .empty-state{text-align:center;padding:3rem;color:var(--texto-2)}
+  .btn-comprobante{background:rgba(79,195,247,.1);border:1px solid rgba(79,195,247,.25);color:#4fc3f7;border-radius:5px;padding:.3rem .75rem;font-size:12px;text-decoration:none;white-space:nowrap}
+  .btn-comprobante:hover{background:rgba(79,195,247,.2);color:#4fc3f7}
+</style>
+
+<div class="page-title"><i class="fas fa-chart-bar me-2" style="color:var(--rojo)"></i>Reporte de Movimientos</div>
+<div class="page-sub">Historial de entradas y salidas del inventario.</div>
+
+<form method="GET" action="{% url 'reporte_movimientos' %}">
+  <div class="filtro-bar">
+    <div>
+      <label>Fecha</label>
+      <input type="date" class="form-control" name="fecha" value="{{ fecha }}" style="min-width:160px">
+    </div>
+    <div>
+      <label>Tipo</label>
+      <select class="form-control" name="tipo" style="min-width:140px">
+        <option value="">Todos</option>
+        <option value="entrada" {% if tipo == 'entrada' %}selected{% endif %}>Entradas</option>
+        <option value="salida"  {% if tipo == 'salida'  %}selected{% endif %}>Salidas</option>
+      </select>
+    </div>
+    <button type="submit" class="btn-uu btn-uu-red">
+      <i class="fas fa-filter me-1"></i>Filtrar
+    </button>
+    <a href="{% url 'reporte_movimientos' %}" class="btn-uu btn-uu-outline">Hoy</a>
+  </div>
+</form>
+
+<div class="resumen-grid">
+  <div class="res-card">
+    <div class="res-label">Total entradas</div>
+    <div class="res-value" style="color:#48c78e">{{ total_entradas }}</div>
+  </div>
+  <div class="res-card">
+    <div class="res-label">Total salidas</div>
+    <div class="res-value" style="color:#ff6b6b">{{ total_salidas }}</div>
+  </div>
+  <div class="res-card">
+    <div class="res-label">Movimientos</div>
+    <div class="res-value">{{ movimientos|length }}</div>
+  </div>
+</div>
+
+<div class="tabla-wrap">
+  {% if movimientos %}
+  <table class="table mb-0">
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Placa</th>
+        <th>Servicio</th>
+        <th>Observación</th>
+        <th>Fecha</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in movimientos %}
+      <tr>
+        <td>
+          {% if m.tipo == 'entrada' %}
+            <span class="badge-entrada">↓ Entrada</span>
+          {% else %}
+            <span class="badge-salida">↑ Salida</span>
+          {% endif %}
+        </td>
+        <td style="font-weight:600">{{ m.producto.nombre }}</td>
+        <td>{{ m.cantidad }} uds</td>
+        <td>
+          {% if m.placa %}
+            <span class="placa-tag">{{ m.placa }}</span>
+          {% else %}
+            <span style="color:var(--texto-3)">—</span>
+          {% endif %}
+        </td>
+        <td>{{ m.get_servicio_display|default:"—" }}</td>
+        <td style="font-size:12px;color:var(--texto-2)">{{ m.observacion|default:"—" }}</td>
+        <td style="font-size:12px;color:var(--texto-3)">{{ m.fecha|date:"d/m/Y H:i" }}</td>
+        <td>
+          {% if m.placa and m.tipo == 'salida' %}
+            <a href="{% url 'comprobante_repuestos' m.placa %}" class="btn-comprobante">
+              <i class="fas fa-file-alt me-1"></i>Comprobante
+            </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-inbox" style="font-size:40px;display:block;margin-bottom:1rem;color:var(--texto-3)"></i>
+    No hay movimientos para esta fecha.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

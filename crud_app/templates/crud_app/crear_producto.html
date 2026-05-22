@@ -1,0 +1,92 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Agregar Producto — Urueta & Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-wrap{max-width:580px;margin:2.5rem auto;padding:0 1rem}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:2rem}
+  .card-form{background:var(--gris-2,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .card-section{padding:1.5rem 2rem;border-bottom:1px solid var(--borde)}
+  .card-section:last-child{border-bottom:none}
+  .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+  .section-label i{color:var(--rojo)}
+  .info-box{background:rgba(79,195,247,.07);border:1px solid rgba(79,195,247,.2);border-radius:6px;padding:.85rem 1rem;font-size:12px;color:#90caf9;display:flex;gap:.6rem;align-items:flex-start;margin-bottom:1.25rem}
+  .card-footer{padding:1.25rem 2rem;background:var(--carbon-2,#141414);display:flex;justify-content:space-between;gap:.75rem}
+</style>
+
+<div class="page-wrap">
+  <div class="page-title"><i class="fas fa-plus-circle me-2" style="color:var(--rojo)"></i>Agregar Producto</div>
+  <div class="page-sub">Si el producto ya existe en el inventario, la cantidad se sumará automáticamente.</div>
+
+  <div class="card-form">
+    <form method="POST" action="{% url 'crear_producto' %}">
+      {% csrf_token %}
+      <div class="card-section">
+        <div class="section-label"><i class="fas fa-box"></i> Información del producto</div>
+
+        <div class="info-box">
+          <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0"></i>
+          <span>Si ingresas el nombre de un producto que ya existe, el sistema sumará la cantidad automáticamente en lugar de crear un duplicado.</span>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Nombre del producto</label>
+          <input type="text" class="form-control" name="nombre"
+                 placeholder="Ej: Llanta, Filtro de aceite, Bujía..."
+                 required autocomplete="off" id="inputNombre">
+          <div id="sugerencia" style="font-size:12px;color:#f0c040;margin-top:4px;display:none">
+            <i class="fas fa-triangle-exclamation me-1"></i>
+            Este producto ya existe en el inventario. Se sumará la cantidad.
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label">Cantidad a ingresar</label>
+            <input type="number" class="form-control" name="cantidad"
+                   placeholder="0" min="1" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Precio unitario ($)</label>
+            <input type="number" class="form-control" name="precio"
+                   placeholder="0.00" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <label class="form-label">Descripción <span style="color:var(--texto-3)">(opcional)</span></label>
+          <textarea class="form-control" name="descripcion" rows="2"
+                    placeholder="Marca, referencia, características..."></textarea>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <a href="{% url 'inventario' %}" class="btn-uu btn-uu-outline">Cancelar</a>
+        <button type="submit" class="btn-uu btn-uu-red">
+          <i class="fas fa-plus me-2"></i>Agregar al inventario
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Lista de productos existentes para sugerir al admin
+const productosExistentes = [
+  {% for p in productos_existentes %}"{{ p.nombre|lower }}"{% if not forloop.last %},{% endif %}{% endfor %}
+];
+
+const input = document.getElementById('inputNombre');
+const sugerencia = document.getElementById('sugerencia');
+
+input.addEventListener('input', function(){
+  const val = this.value.trim().toLowerCase();
+  if(val.length > 2 && productosExistentes.includes(val)){
+    sugerencia.style.display = 'block';
+  } else {
+    sugerencia.style.display = 'none';
+  }
+});
+</script>
+{% endblock %}

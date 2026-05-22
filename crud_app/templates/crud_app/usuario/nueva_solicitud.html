@@ -1,0 +1,146 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Nueva Solicitud — Urueta & Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-wrap{max-width:680px;margin:2.5rem auto;padding:0 1rem}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:2rem}
+  .card-form{background:var(--gris-2);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .card-section{padding:1.5rem 2rem;border-bottom:1px solid var(--borde)}
+  .card-section:last-child{border-bottom:none}
+  .section-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+  .section-label i{color:var(--rojo)}
+  .form-label{font-size:12px;color:var(--texto-2);margin-bottom:.4rem}
+  .placa-wrap{position:relative}
+  .placa-wrap input{text-transform:uppercase;letter-spacing:.15em;font-weight:600;font-size:15px}
+  .placa-hint{font-size:11px;color:var(--texto-3);margin-top:4px}
+  .servicio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}
+  .servicio-btn{background:var(--gris-3);border:2px solid var(--gris-4);border-radius:6px;padding:.85rem .75rem;text-align:center;cursor:pointer;transition:all .2s}
+  .servicio-btn:hover{border-color:var(--texto-2)}
+  .servicio-btn.selected{border-color:var(--rojo);background:rgba(215,43,43,.08)}
+  .servicio-btn i{font-size:22px;display:block;margin-bottom:.4rem;color:var(--texto-2)}
+  .servicio-btn.selected i{color:var(--rojo)}
+  .servicio-btn strong{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;color:#fff;display:block}
+  .card-footer{padding:1.5rem 2rem;background:var(--gris-1);display:flex;justify-content:flex-end;gap:.75rem}
+</style>
+
+<div class="page-wrap">
+  <div class="page-title"><i class="fas fa-calendar-plus me-2" style="color:var(--rojo)"></i>Nueva Solicitud</div>
+  <div class="page-sub">Completa el formulario y el taller revisará tu solicitud pronto.</div>
+
+  <div class="card-form">
+    <form method="POST" action="{% url 'nueva_solicitud' %}">
+      {% csrf_token %}
+
+      {#     Datos personales #}
+      <div class="card-section">
+        <div class="section-label"><i class="fas fa-user"></i> Datos personales</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Nombre completo</label>
+            <input type="text" class="form-control" name="nombre" placeholder="Tu nombre completo" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Teléfono / WhatsApp</label>
+            <input type="tel" class="form-control" name="telefono" placeholder="3001234567" required>
+          </div>
+        </div>
+      </div>
+
+      {# Datos del vehículo #}
+      <div class="card-section">
+        <div class="section-label"><i class="fas fa-car"></i> Datos del vehículo</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Placa</label>
+            <div class="placa-wrap">
+              <input type="text" class="form-control" name="placa" id="inputPlaca"
+                     placeholder="ABC123" maxlength="6" required
+                     oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+            </div>
+            <div class="placa-hint">3 letras + 3 números · Ej: ABC123</div>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label">Marca y modelo</label>
+            <input type="text" class="form-control" name="modelo" placeholder="Ej: Chevrolet Spark" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Año</label>
+            <input type="number" class="form-control" name="anio"
+                   placeholder="2020" min="1970" max="2026" required>
+          </div>
+        </div>
+      </div>
+
+      {# Servicio #}
+      <div class="card-section">
+        <div class="section-label"><i class="fas fa-wrench"></i> Servicio requerido</div>
+        <input type="hidden" name="servicio" id="servicioSeleccionado" required>
+        <div class="servicio-grid" id="servicioGrid">
+          <div class="servicio-btn" onclick="selServicio('mecanica',this)">
+            <i class="fas fa-wrench"></i><strong>Mecánica</strong>
+          </div>
+          <div class="servicio-btn" onclick="selServicio('electrico',this)">
+            <i class="fas fa-bolt"></i><strong>Eléctrico</strong>
+          </div>
+          <div class="servicio-btn" onclick="selServicio('aire',this)">
+            <i class="fas fa-wind"></i><strong>Aire Acond.</strong>
+          </div>
+          <div class="servicio-btn" onclick="selServicio('latoneria',this)">
+            <i class="fas fa-car-burst"></i><strong>Latonería</strong>
+          </div>
+          <div class="servicio-btn" onclick="selServicio('pintura',this)">
+            <i class="fas fa-spray-can"></i><strong>Pintura</strong>
+          </div>
+        </div>
+        <div class="mt-3">
+          <label class="form-label">Describe el problema <span style="color:var(--texto-3)">(opcional)</span></label>
+          <textarea class="form-control" name="descripcion" rows="3"
+                    placeholder="Cuéntanos brevemente qué le pasa al vehículo..."></textarea>
+        </div>
+      </div>
+
+      {# Fecha y hora #}
+      <div class="card-section">
+        <div class="section-label"><i class="fas fa-calendar-days"></i> Fecha y hora preferida</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Fecha</label>
+            <input type="date" class="form-control" name="fecha_pedida" id="fechaInput" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Hora</label>
+            <input type="time" class="form-control" name="hora_pedida"
+                   min="08:00" max="17:00" required>
+          </div>
+        </div>
+        <div class="placa-hint mt-2">
+          <i class="fas fa-info-circle me-1"></i>
+          Horario de atención: Lunes a Sábado, 8:00 am – 5:00 pm.
+          El taller confirmará o propondrá otra fecha según disponibilidad.
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <a href="{% url 'dashboard' %}" class="btn-uu btn-uu-outline">Cancelar</a>
+        <button type="submit" class="btn-uu btn-uu-red">
+          <i class="fas fa-paper-plane me-2"></i>Enviar solicitud
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Bloquear fechas pasadas y domingos
+const hoy = new Date().toISOString().split('T')[0];
+document.getElementById('fechaInput').min = hoy;
+
+function selServicio(valor, el) {
+  document.querySelectorAll('.servicio-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('servicioSeleccionado').value = valor;
+}
+</script>
+{% endblock %}  

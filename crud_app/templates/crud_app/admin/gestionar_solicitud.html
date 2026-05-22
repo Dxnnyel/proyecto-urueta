@@ -1,0 +1,139 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Gestionar Solicitud — Admin{% endblock %}
+
+{% block content %}
+<style>
+  .page-wrap{max-width:620px;margin:2.5rem auto;padding:0 1rem}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:.25rem}
+  .card{background:var(--gris-2);border:1px solid var(--borde);border-radius:8px;overflow:hidden;margin-bottom:1.25rem}
+  .card-section{padding:1.25rem 1.5rem;border-bottom:1px solid var(--borde)}
+  .card-section:last-child{border-bottom:none}
+  .section-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);font-weight:600;margin-bottom:.9rem}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  .info-item label{font-size:11px;color:var(--texto-3);display:block;margin-bottom:2px}
+  .info-item span{font-size:14px;color:#fff;font-weight:500}
+  .placa-big{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;letter-spacing:.15em;color:#fff}
+  .accion-card{background:var(--gris-3);border:1px solid var(--borde);border-radius:7px;padding:1.25rem;margin-bottom:.75rem;cursor:pointer;transition:border-color .2s}
+  .accion-card:hover{border-color:var(--texto-2)}
+  .accion-card.selected-agendar{border-color:#48c78e;background:rgba(72,199,142,.06)}
+  .accion-card.selected-reprogramar{border-color:#ff8c00;background:rgba(255,140,0,.06)}
+  .accion-title{font-weight:700;font-size:14px;color:#fff;margin-bottom:.2rem}
+  .accion-desc{font-size:12px;color:var(--texto-2)}
+  .repro-fields{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--borde)}
+  .form-label{font-size:12px;color:var(--texto-2);margin-bottom:.4rem}
+  .card-footer{padding:1.25rem 1.5rem;background:var(--gris-1);display:flex;justify-content:space-between;align-items:center}
+</style>
+
+<div class="page-wrap">
+  <div style="margin-bottom:1.5rem">
+    <a href="{% url 'admin_solicitudes' %}" style="color:var(--texto-2);font-size:13px;text-decoration:none">
+      <i class="fas fa-arrow-left me-1"></i> Volver a solicitudes
+    </a>
+  </div>
+
+  <div class="page-title">Gestionar solicitud</div>
+
+  {# Info de la solicitud #}
+  <div class="card">
+    <div class="card-section">
+      <div class="section-label">Vehículo</div>
+      <div class="placa-big">{{ solicitud.placa }}</div>
+      <div style="font-size:13px;color:var(--texto-2);margin-top:.25rem">{{ solicitud.modelo }} · {{ solicitud.anio }}</div>
+    </div>
+    <div class="card-section">
+      <div class="section-label">Cliente</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Nombre</label><span>{{ solicitud.nombre }}</span></div>
+        <div class="info-item"><label>Teléfono</label><span>{{ solicitud.telefono }}</span></div>
+        <div class="info-item"><label>Servicio</label><span>{{ solicitud.get_servicio_display }}</span></div>
+        <div class="info-item"><label>Estado actual</label><span>{{ solicitud.get_estado_display }}</span></div>
+        <div class="info-item"><label>Fecha pedida</label><span>{{ solicitud.fecha_pedida }}</span></div>
+        <div class="info-item"><label>Hora pedida</label><span>{{ solicitud.hora_pedida }}</span></div>
+      </div>
+      {% if solicitud.descripcion %}
+      <div style="margin-top:.75rem;font-size:13px;color:var(--texto-2)">
+        <label style="font-size:11px;color:var(--texto-3);display:block;margin-bottom:2px">Descripción del problema</label>
+        {{ solicitud.descripcion }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if solicitud.estado == 'espera' %}
+  {#Acciones #}
+  <div class="card">
+    <div class="card-section">
+      <div class="section-label">¿Qué deseas hacer?</div>
+      <form method="POST" action="{% url 'admin_gestionar_solicitud' solicitud.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" id="accionInput">
+
+        <div class="accion-card" id="btnAgendar" onclick="selAccion('agendar')">
+          <div class="accion-title">✅ Agendar en la fecha pedida</div>
+          <div class="accion-desc">
+            Confirmar la cita para el {{ solicitud.fecha_pedida }} a las {{ solicitud.hora_pedida }}.
+          </div>
+        </div>
+
+        <div class="accion-card" id="btnReprogramar" onclick="selAccion('reprogramar')">
+          <div class="accion-title">🔄 Proponer otra fecha</div>
+          <div class="accion-desc">Sugerir una fecha y hora diferente al cliente.</div>
+          <div class="repro-fields" id="reproFields">
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label">Nueva fecha</label>
+                <input type="date" class="form-control" name="fecha_admin" id="fechaAdmin">
+              </div>
+              <div class="col-6">
+                <label class="form-label">Nueva hora</label>
+                <input type="time" class="form-control" name="hora_admin" min="08:00" max="17:00">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer" style="background:transparent;padding:1rem 0 0;border:none">
+          <a href="{% url 'admin_solicitudes' %}" class="btn-uu btn-uu-outline">Cancelar</a>
+          <button type="submit" class="btn-uu btn-uu-red" id="btnSubmit" disabled>
+            Confirmar acción
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% else %}
+  <div style="background:var(--gris-2);border:1px solid var(--borde);border-radius:8px;padding:1.25rem 1.5rem;font-size:13px;color:var(--texto-2);margin-bottom:1rem">
+    <i class="fas fa-info-circle me-1" style="color:var(--rojo)"></i>
+    Estado actual: <strong style="color:#fff">{{ solicitud.get_estado_display }}</strong>
+    {% if solicitud.fecha_admin %}
+    · Nueva fecha: <strong style="color:#fff">{{ solicitud.fecha_admin }} — {{ solicitud.hora_admin }}</strong>
+    {% endif %}
+  </div>
+
+  {% if solicitud.estado in 'agendada,confirmada,terminada' %}
+  <a href="{% url 'agregar_repuesto_solicitud' solicitud.pk %}" class="btn-uu btn-uu-red" style="display:inline-flex;align-items:center;gap:.5rem">
+    <i class="fas fa-boxes-stacked"></i> Gestionar repuestos usados
+  </a>
+  {% endif %}
+{% endif %}
+</div>
+
+<script>
+function selAccion(accion) {
+  document.getElementById('accionInput').value = accion;
+  document.getElementById('btnAgendar').className = 'accion-card' + (accion==='agendar' ? ' selected-agendar' : '');
+  document.getElementById('btnReprogramar').className = 'accion-card' + (accion==='reprogramar' ? ' selected-reprogramar' : '');
+  document.getElementById('reproFields').style.display = accion==='reprogramar' ? 'block' : 'none';
+
+  const fechaAdmin = document.getElementById('fechaAdmin');
+  if(accion==='reprogramar') {
+    fechaAdmin.min = new Date().toISOString().split('T')[0];
+    fechaAdmin.required = true;
+  } else {
+    fechaAdmin.required = false;
+  }
+  document.getElementById('btnSubmit').disabled = false;
+}
+</script>
+{% endblock %}

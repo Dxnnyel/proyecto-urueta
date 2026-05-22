@@ -1,0 +1,123 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Solicitudes — Admin{% endblock %}
+
+{% block content %}
+<style>
+  .page-wrap{max-width:960px;margin:2.5rem auto;padding:0 1rem}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:2rem}
+  .filtros{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap}
+  .filtro-btn{background:var(--gris-3);border:1px solid var(--borde);color:var(--texto-2);border-radius:99px;padding:.3rem .9rem;font-size:12px;cursor:pointer;transition:all .2s}
+  .filtro-btn.active,.filtro-btn:hover{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-2);padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--borde)}
+  td{padding:.75rem 1rem;font-size:13px;border-bottom:1px solid var(--borde);color:var(--texto-1);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .placa-tag{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:.1em}
+  .badge-estado{font-size:10px;font-weight:600;padding:3px 10px;border-radius:99px;text-transform:uppercase}
+  .badge-espera{background:rgba(240,196,64,.1);color:#f0c040}
+  .badge-agendada{background:rgba(72,199,142,.1);color:#48c78e}
+  .badge-reprogramada{background:rgba(255,140,0,.1);color:#ff8c00}
+  .badge-confirmada{background:rgba(79,195,247,.1);color:#4fc3f7}
+  .badge-rechazada{background:rgba(215,43,43,.1);color:#ff6b6b}
+  .btn-gestionar{background:var(--rojo);color:#fff;border:none;border-radius:5px;padding:.35rem .85rem;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none}
+  .card-table{background:var(--gris-2);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .empty-state{text-align:center;padding:3rem;color:var(--texto-2)}
+  @media (max-width: 768px) {
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(4), td:nth-child(4),
+  th:nth-child(5), td:nth-child(5) {display: none;}
+  .card-table { overflow-x: auto; }
+  .btn-gestionar { padding: .3rem .6rem; font-size: 11px; }
+  .badge-estado { font-size: 9px; padding: 2px 6px; }
+  }
+</style>
+
+<div class="page-wrap">
+  <div class="page-title"><i class="fas fa-list-check me-2" style="color:var(--rojo)"></i>Solicitudes de servicio</div>
+  <div class="page-sub">Gestiona las solicitudes de los clientes.</div>
+
+  <div class="filtros">
+    <span class="filtro-btn active" onclick="filtrar('todas',this)">Todas ({{ solicitudes|length }})</span>
+    <span class="filtro-btn" onclick="filtrar('espera',this)">⏳ En espera</span>
+    <span class="filtro-btn" onclick="filtrar('agendada',this)">✅ Agendadas</span>
+    <span class="filtro-btn" onclick="filtrar('reprogramada',this)">🔄 Reprogramadas</span>
+    <span class="filtro-btn" onclick="filtrar('confirmada',this)">📅 Confirmadas</span>
+    <span class="filtro-btn" onclick="filtrar('rechazada',this)">❌ Rechazadas</span>
+  </div>
+
+  <!-- Buscador -->
+  <div style="margin-bottom:1.25rem;max-width:400px">
+    <input type="text" id="buscadorSolicitud" class="form-control"
+      placeholder="Buscar por placa o cliente..."
+      oninput="buscar(this.value)">
+  </div>
+
+  <div class="card-table">
+    {% if solicitudes %}
+    <table id="tablaSolicitudes">
+      <thead>
+        <tr>
+          <th>Placa</th>
+          <th>Cliente</th>
+          <th>Servicio</th>
+          <th>Fecha pedida</th>
+          <th>Hora</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in solicitudes %}
+        <tr data-estado="{{ s.estado }}">
+          <td><span class="placa-tag">{{ s.placa }}</span></td>
+          <td>
+            <div>{{ s.nombre }}</div>
+            <div style="font-size:11px;color:var(--texto-3)">{{ s.telefono }}</div>
+          </td>
+          <td>{{ s.get_servicio_display }}</td>
+          <td>{{ s.fecha_pedida }}</td>
+          <td>{{ s.hora_pedida }}</td>
+          <td><span class="badge-estado badge-{{ s.estado }}">{{ s.get_estado_display }}</span></td>
+          <td>
+            {% if s.estado == 'espera' %}
+            <a href="{% url 'admin_gestionar_solicitud' s.pk %}" class="btn-gestionar">Gestionar</a>
+            {% else %}
+            <a href="{% url 'admin_gestionar_solicitud' s.pk %}" class="btn-gestionar" style="background:var(--gris-4)">Ver</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-inbox" style="font-size:40px;color:var(--texto-3);display:block;margin-bottom:1rem"></i>
+      No hay solicitudes todavía.
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function filtrar(estado, btn) {
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#tablaSolicitudes tbody tr').forEach(tr => {
+    tr.style.display = (estado === 'todas' || tr.dataset.estado === estado) ? '' : 'none';
+  });
+}
+
+function buscar(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('#tablaSolicitudes tbody tr').forEach(tr => {
+    const placa   = tr.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
+    const cliente = tr.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+    tr.style.display = (placa.includes(q) || cliente.includes(q)) ? '' : 'none';
+  });
+}
+</script>
+
+
+{% endblock %}

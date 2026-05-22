@@ -1,0 +1,40 @@
+{% extends 'crud_app/base.html' %}
+
+{% block title %}Inventario - Urueta{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+  <div>
+    <h2>Inventario</h2>
+    <p class="text-secondary">Busca productos y revisa el stock diario de repuestos.</p>
+  </div>
+  <form class="d-flex" method="get">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar por nombre">
+    <button type="submit" class="btn btn-danger ms-2">Buscar</button>
+  </form>
+</div>
+
+<div class="row g-3">
+  {% for p in productos %}
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm" style="background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde) !important">
+      <div class="card-body">
+        <h5 class="card-title" style="color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px">{{ p.nombre }}</h5>
+        <p class="card-text" style="color:var(--texto-2);font-size:13px">{{ p.descripcion|default:'Sin descripción' }}</p>
+        <p style="color:var(--texto-1)"><strong style="color:var(--texto-2)">Cantidad:</strong> {{ p.cantidad }}</p>
+        <p style="color:var(--texto-1)"><strong style="color:var(--texto-2)">Precio:</strong> ${{ p.precio }}</p>
+        {% if p.cantidad < 5 %}
+          <span class="badge bg-warning text-dark">Poco stock</span>
+        {% else %}
+          <span class="badge bg-success">Stock suficiente</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="alert alert-secondary">No se encontraron productos en el inventario.</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

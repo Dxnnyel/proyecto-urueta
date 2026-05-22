@@ -1,0 +1,87 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Productos — Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;color:#fff;margin-bottom:.25rem}
+  .card-block{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .placa-tag{font-weight:700;font-size:15px;color:#fff}
+  .empty-state{text-align:center;padding:3rem;color:var(--texto-2)}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-2);padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--borde)}
+  td{padding:.75rem 1rem;font-size:13px;border-bottom:1px solid var(--borde);color:var(--texto-1);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  @media(max-width:768px){
+    th:nth-child(2),td:nth-child(2),
+    th:nth-child(5),td:nth-child(5){display:none}
+  }
+</style>
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+  <div class="page-title"><i class="fas fa-list me-2" style="color:var(--rojo)"></i>Productos</div>
+  {% if user.is_staff %}
+  <a href="{% url 'crear_producto' %}" class="btn-uu btn-uu-red">
+    <i class="fas fa-plus me-2"></i>Agregar producto
+  </a>
+  {% endif %}
+</div>
+
+<!-- Buscador -->
+<div style="margin-bottom:1.25rem;max-width:400px">
+  <input type="text" id="buscadorProducto" class="form-control"
+    placeholder="Buscar por nombre..." oninput="filtrarProductos(this.value)">
+</div>
+
+<div class="card-block">
+  <table id="tablaProductos">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+        <th>Creado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in productos %}
+      <tr>
+        <td><span class="placa-tag">{{ p.nombre }}</span></td>
+        <td style="color:var(--texto-2)">{{ p.descripcion|default:"—" }}</td>
+        <td>
+          {% if p.cantidad < 5 %}
+            <span style="color:#ff6b6b;font-weight:600">{{ p.cantidad }} uds ⚠️</span>
+          {% else %}
+            {{ p.cantidad }} uds
+          {% endif %}
+        </td>
+        <td>${{ p.precio }}</td>
+        <td style="color:var(--texto-2);font-size:12px">{{ p.creado_el|date:"d/m/Y H:i" }}</td>
+        <td>
+          {% if user.is_staff %}
+          <a href="{% url 'actualizar_producto' p.id %}" class="btn-uu btn-uu-outline" style="padding:.3rem .75rem;font-size:12px">Editar</a>
+          <a href="{% url 'eliminar_producto' p.id %}" style="background:transparent;border:1px solid rgba(215,43,43,.4);color:#ff6b6b;border-radius:5px;padding:.3rem .75rem;font-size:12px;text-decoration:none;margin-left:.4rem">Eliminar</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="empty-state">No hay productos disponibles.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+function filtrarProductos(q) {
+  const filas = document.querySelectorAll('#tablaProductos tbody tr');
+  filas.forEach(tr => {
+    const nombre = tr.querySelector('td')?.textContent.toLowerCase() || '';
+    tr.style.display = nombre.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}

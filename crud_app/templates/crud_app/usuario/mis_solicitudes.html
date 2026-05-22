@@ -1,0 +1,128 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Mis Solicitudes — Urueta & Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-wrap{max-width:800px;margin:2.5rem auto;padding:0 1rem}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:2rem}
+  .sol-card{background:var(--gris-2);border:1px solid var(--borde);border-radius:8px;margin-bottom:1rem;overflow:hidden}
+  .sol-header{padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-bottom:1px solid var(--borde)}
+  .sol-placa{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:.1em;color:#fff}
+  .sol-servicio{font-size:13px;color:var(--texto-2)}
+  .badge-estado{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px}
+  .badge-espera{background:rgba(240,196,64,.1);color:#f0c040;border:1px solid rgba(240,196,64,.3)}
+  .badge-agendada{background:rgba(72,199,142,.1);color:#48c78e;border:1px solid rgba(72,199,142,.3)}
+  .badge-reprogramada{background:rgba(255,140,0,.1);color:#ff8c00;border:1px solid rgba(255,140,0,.3)}
+  .badge-confirmada{background:rgba(79,195,247,.1);color:#4fc3f7;border:1px solid rgba(79,195,247,.3)}
+  .badge-rechazada{background:rgba(215,43,43,.1);color:#ff6b6b;border:1px solid rgba(215,43,43,.3)}
+  .sol-body{padding:1rem 1.25rem}
+  .sol-info{display:flex;gap:2rem;flex-wrap:wrap;font-size:13px;color:var(--texto-2)}
+  .sol-info span{display:flex;align-items:center;gap:6px}
+  .sol-info i{color:var(--rojo);font-size:12px}
+  .repro-box{background:rgba(255,140,0,.06);border:1px solid rgba(255,140,0,.25);border-radius:6px;padding:1rem 1.25rem;margin-top:.75rem}
+  .repro-title{font-size:12px;font-weight:600;color:#ff8c00;margin-bottom:.5rem}
+  .repro-fecha{font-size:14px;color:#fff;font-weight:500;margin-bottom:.75rem}
+  .repro-actions{display:flex;gap:.5rem}
+  .btn-aceptar{background:#48c78e;color:#fff;border:none;border-radius:5px;padding:.45rem 1rem;font-size:13px;font-weight:600;cursor:pointer}
+  .btn-rechazar{background:transparent;color:#ff6b6b;border:1px solid rgba(215,43,43,.4);border-radius:5px;padding:.45rem 1rem;font-size:13px;font-weight:600;cursor:pointer}
+  .empty-state{text-align:center;padding:3rem 1rem;color:var(--texto-2)}
+  .empty-state i{font-size:48px;color:var(--texto-3);margin-bottom:1rem;display:block}
+</style>
+
+<div class="page-wrap">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:2rem">
+    <div>
+      <div class="page-title"><i class="fas fa-inbox me-2" style="color:var(--rojo)"></i>Mis Solicitudes</div>
+      <div class="page-sub">Aquí puedes ver el estado de todas tus solicitudes.</div>
+    </div>
+    <a href="{% url 'nueva_solicitud' %}" class="btn-uu btn-uu-red">
+      <i class="fas fa-plus me-2"></i>Nueva solicitud
+    </a>
+  </div>
+
+  {% if solicitudes %}
+    {% for s in solicitudes %}
+    <div class="sol-card">
+      <div class="sol-header">
+        <div>
+          <div class="sol-placa">{{ s.placa }}</div>
+          <div class="sol-servicio">{{ s.get_servicio_display }} · {{ s.modelo }} {{ s.anio }}</div>
+        </div>
+        <span class="badge-estado badge-{{ s.estado }}">
+          {% if s.estado == 'espera' %}⏳ En espera
+          {% elif s.estado == 'agendada' %}✅ Agendada
+          {% elif s.estado == 'reprogramada' %}🔄 Reprogramada
+          {% elif s.estado == 'confirmada' %}📅 Confirmada
+          {% elif s.estado == 'rechazada' %}❌ Rechazada
+          {% elif s.estado == 'terminada' %}🏁 Terminado
+          {% endif %}
+        </span>
+      </div>
+      <div class="sol-body">
+        <div class="sol-info">
+          <span><i class="fas fa-calendar"></i> Fecha pedida: {{ s.fecha_pedida }}</span>
+          <span><i class="fas fa-clock"></i> Hora: {{ s.hora_pedida }}</span>
+          <span><i class="fas fa-user"></i> {{ s.nombre }}</span>
+          <span><i class="fas fa-phone"></i> {{ s.telefono }}</span>
+        </div>
+        {% if s.descripcion %}
+        <div style="margin-top:.6rem;font-size:13px;color:var(--texto-2)">
+          <i class="fas fa-comment me-1" style="color:var(--rojo)"></i>{{ s.descripcion }}
+        </div>
+        {% endif %}
+
+        {% if s.estado == 'agendada' or s.estado == 'confirmada' %}
+        <div style="margin-top:.75rem;background:rgba(72,199,142,.06);border:1px solid rgba(72,199,142,.2);border-radius:6px;padding:.75rem 1rem;font-size:13px;color:#48c78e">
+          <i class="fas fa-check-circle me-1"></i>
+          Tu cita está confirmada para el <strong>{{ s.fecha_pedida }}</strong> a las <strong>{{ s.hora_pedida }}</strong>. ¡Te esperamos!
+        </div>
+        {% endif %}
+
+        {% if s.estado == 'terminada' %}
+        <div style="margin-top:.75rem;background:rgba(240,196,64,.06);border:1px solid rgba(240,196,64,.2);border-radius:6px;padding:.75rem 1rem;font-size:13px;color:#f0c040">
+          <i class="fas fa-flag-checkered me-1"></i>
+          Tu servicio fue completado. Ya puedes ver los repuestos que se usaron en tu vehículo.
+        </div>
+        <div style="margin-top:.6rem">
+          <a href="{% url 'comprobante_repuestos' s.placa %}" class="btn-uu btn-uu-red" style="font-size:13px;display:inline-flex;align-items:center;gap:.5rem">
+            <i class="fas fa-file-alt"></i> Ver comprobante de repuestos
+          </a>
+        </div>
+        {% endif %}
+
+        {% if s.estado == 'reprogramada' %}
+        <div class="repro-box">
+          <div class="repro-title"><i class="fas fa-rotate me-1"></i>El taller propone una nueva fecha</div>
+          <div class="repro-fecha">
+            📅 {{ s.fecha_admin }} &nbsp;·&nbsp; 🕐 {{ s.hora_admin }}
+          </div>
+          <div class="repro-actions">
+            <form method="POST" action="{% url 'responder_reprogramacion' s.pk %}" style="display:inline">
+              {% csrf_token %}
+              <input type="hidden" name="respuesta" value="aceptar">
+              <button type="submit" class="btn-aceptar">✅ Aceptar nueva fecha</button>
+            </form>
+            <form method="POST" action="{% url 'responder_reprogramacion' s.pk %}" style="display:inline">
+              {% csrf_token %}
+              <input type="hidden" name="respuesta" value="rechazar">
+              <button type="submit" class="btn-rechazar">❌ Rechazar</button>
+            </form>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <i class="fas fa-calendar-xmark"></i>
+      <p>No tienes solicitudes todavía.</p>
+      <a href="{% url 'nueva_solicitud' %}" class="btn-uu btn-uu-red mt-2">
+        <i class="fas fa-plus me-2"></i>Crear primera solicitud
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}  

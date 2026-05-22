@@ -1,0 +1,130 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Historial de servicios — Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;text-transform:uppercase;color:#fff;margin-bottom:.25rem}
+  .page-sub{color:var(--texto-2);font-size:13px;margin-bottom:1.75rem}
+  .filtro-bar{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+  .filtro-bar label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-2);display:block;margin-bottom:4px}
+  .resumen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+  .res-card{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;padding:1.25rem 1.5rem}
+  .res-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-2);margin-bottom:.4rem}
+  .res-value{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;color:#fff}
+  .card-block{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden}
+  .placa-tag{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:17px;letter-spacing:.1em;color:#fff}
+  .badge-estado{font-size:10px;font-weight:600;padding:3px 10px;border-radius:99px;text-transform:uppercase}
+  .badge-espera{background:rgba(240,196,64,.1);color:#f0c040}
+  .badge-agendada{background:rgba(72,199,142,.1);color:#48c78e}
+  .badge-confirmada{background:rgba(79,195,247,.1);color:#4fc3f7}
+  .badge-reprogramada{background:rgba(255,140,0,.1);color:#ff8c00}
+  .badge-rechazada{background:rgba(215,43,43,.1);color:#ff6b6b}
+  .badge-terminada{background:rgba(240,196,64,.1);color:#f0c040}
+  .empty-state{text-align:center;padding:3rem;color:var(--texto-2)}
+  .empty-state i{font-size:40px;display:block;margin-bottom:1rem;color:var(--texto-3)}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--texto-2);padding:.6rem 1rem;text-align:left;border-bottom:1px solid var(--borde)}
+  td{padding:.75rem 1rem;font-size:13px;border-bottom:1px solid var(--borde);color:var(--texto-1);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  select.form-control option {background: #242424;color: #fff;}
+  @media (max-width: 768px) {
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(4), td:nth-child(4),
+  th:nth-child(6), td:nth-child(6) {display: none;}
+  .card-block { overflow-x: auto; }
+  .resumen-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<div class="page-title"><i class="fas fa-clock-rotate-left me-2" style="color:var(--rojo)"></i>Historial de servicios</div>
+<p class="page-sub">Todos los servicios registrados en el taller.</p>
+
+<!-- Filtros -->
+<form method="GET">
+  <div class="filtro-bar">
+    <div>
+      <label>Estado</label>
+      <select class="form-control" name="estado" style="min-width:180px;background:var(--carbon-4,#242424);color:#fff;border:1px solid var(--borde)">
+        <option value="">Todos</option>
+        <option value="espera"       {% if estado == 'espera' %}selected{% endif %}>En espera</option>
+        <option value="agendada"     {% if estado == 'agendada' %}selected{% endif %}>Agendada</option>
+        <option value="confirmada"   {% if estado == 'confirmada' %}selected{% endif %}>Confirmada</option>
+        <option value="reprogramada" {% if estado == 'reprogramada' %}selected{% endif %}>Reprogramada</option>
+        <option value="rechazada"    {% if estado == 'rechazada' %}selected{% endif %}>Rechazada</option>
+        <option value="terminada"    {% if estado == 'terminada' %}selected{% endif %}>Terminada</option>
+      </select>
+    </div>
+    <div>
+      <label>Fecha</label>
+      <input type="date" class="form-control" name="fecha" value="{{ fecha }}" style="min-width:160px">
+    </div>
+    <button type="submit" class="btn-uu btn-uu-red"><i class="fas fa-filter me-1"></i>Filtrar</button>
+    <a href="{% url 'historial_vehiculos' %}" class="btn-uu btn-uu-outline">Limpiar</a>
+  </div>
+</form>
+
+<!-- Resumen -->
+<div class="resumen-grid">
+  <div class="res-card">
+    <div class="res-label">Total servicios</div>
+    <div class="res-value">{{ total }}</div>
+  </div>
+  <div class="res-card">
+    <div class="res-label">Terminados</div>
+    <div class="res-value" style="color:#f0c440">{{ terminadas }}</div>
+  </div>
+  <div class="res-card">
+    <div class="res-label">En proceso</div>
+    <div class="res-value" style="color:#48c78e">{{ en_proceso }}</div>
+  </div>
+</div>
+
+<!-- Tabla -->
+<div class="card-block">
+  {% if solicitudes %}
+  <table>
+    <thead>
+      <tr>
+        <th>Placa</th>
+        <th>Cliente</th>
+        <th>Servicio</th>
+        <th>Fecha pedida</th>
+        <th>Estado</th>
+        <th>Repuestos</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in solicitudes %}
+      <tr>
+        <td><span class="placa-tag">{{ s.placa }}</span></td>
+        <td>
+          <div>{{ s.nombre }}</div>
+          <div style="font-size:11px;color:var(--texto-3)">{{ s.telefono }}</div>
+        </td>
+        <td>{{ s.get_servicio_display }}</td>
+        <td style="color:var(--texto-2)">{{ s.fecha_pedida }}</td>
+        <td><span class="badge-estado badge-{{ s.estado }}">{{ s.get_estado_display }}</span></td>
+        <td style="color:var(--texto-2);font-size:12px">
+          {{ s.repuestos_usados.count }} repuesto{% if s.repuestos_usados.count != 1 %}s{% endif %}
+        </td>
+        <td>
+          {% if s.estado in 'agendada,confirmada,terminada' %}
+          <a href="{% url 'agregar_repuesto_solicitud' s.pk %}" style="font-size:12px;color:#4fc3f7;white-space:nowrap">
+            <i class="fas fa-boxes-stacked me-1"></i>Ver repuestos
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-inbox"></i>
+    No hay servicios con los filtros aplicados.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

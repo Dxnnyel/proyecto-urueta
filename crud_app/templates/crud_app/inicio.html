@@ -1,0 +1,370 @@
+{% extends 'crud_app/base.html' %}
+ 
+{% block title %}Urueta & Urueta — Mecánica Automotriz Montería{% endblock %}
+ 
+{% block main_class %}lp-main{% endblock %}
+ 
+{% block content %}
+ 
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow hero-glow-1"></div>
+    <div class="hero-glow hero-glow-2"></div>
+    <div class="hero-noise"></div>
+  </div>
+ 
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-eyebrow anim">
+        <span class="eyebrow-dot"></span>
+        Taller Automotriz · Montería, Córdoba
+      </div>
+      <h1 class="hero-title anim anim-delay-1">
+        <span class="hero-title-line">Expertos en</span>
+        <span class="hero-title-big">Mecánica</span>
+        <span class="hero-title-accent">Automotriz</span>
+      </h1>
+      <p class="hero-desc anim anim-delay-2">
+        Somos <strong>Urueta &amp; Urueta</strong>, el taller de confianza de Montería.
+        Mecánica integral, eléctrica, aire acondicionado, latonería y repuestos
+        con seguimiento digital de tu vehículo.
+      </p>
+      <div class="hero-stats anim anim-delay-3">
+        <div class="hstat">
+          <div class="hstat-num">15<span>+</span></div>
+          <div class="hstat-label">Años de<br>experiencia</div>
+        </div>
+        <div class="hstat-divider"></div>
+        <div class="hstat">
+          <div class="hstat-num">500<span>+</span></div>
+          <div class="hstat-label">Vehículos<br>atendidos</div>
+        </div>
+        <div class="hstat-divider"></div>
+        <div class="hstat">
+          <div class="hstat-num">6</div>
+          <div class="hstat-label">Servicios<br>especializados</div>
+        </div>
+      </div>
+      <div class="hero-cta anim anim-delay-4">
+        <a href="{% url 'login' %}" class="btn-ghost-hero">
+          <i class="fas fa-right-to-bracket"></i>
+          Acceder al sistema
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-right anim anim-delay-2">
+      <div style="border-radius:20px;overflow:hidden;border:1px solid var(--borde);box-shadow:0 24px 64px rgba(0,0,0,0.5)">
+        <img 
+          src="https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=800&q=80" 
+          alt="Taller Urueta & Urueta"
+          style="width:100%;height:480px;object-fit:cover;display:block;filter:brightness(0.85)">
+        <div style="padding:1.5rem;background:var(--carbon-3)">
+          <div style="font-family:'Oswald',sans-serif;font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:.4rem">
+            Taller Automotriz Profesional
+          </div>
+          <div style="font-size:.85rem;color:var(--texto-2)">
+            Diagnóstico electrónico · Mano de obra especializada · Repuestos originales
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Conoce más</span>
+  </div>
+</section>
+<!-- SECCIÓN SERVICIOS -->
+<section id="servicios" style="padding:6rem 0;background:var(--carbon-2);position:relative;">
+  <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--rojo),transparent)"></div>
+  <div class="section-wrap">
+    <div class="section-label anim"><span>Lo que hacemos</span></div>
+    <h2 class="section-title anim anim-delay-1">Nuestros servicios</h2>
+    <p class="section-sub anim anim-delay-2" style="margin-bottom:3rem">Soluciones automotrices completas para todas las marcas y modelos</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;">
+
+      <div class="svc-card anim anim-delay-1" style="background:#141414;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:visible;position:relative;transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;">
+        <img src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=600&q=80" alt="Mecánica General" class="svc-card-img" style="filter:brightness(0.6);height:200px;object-fit:cover;width:100%;display:block;">
+        <div class="svc-card-body">
+          <div class="svc-card-icon" style="background:rgba(229,57,53,0.15);border:1px solid rgba(229,57,53,0.5);border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#ff5252;font-size:1.1rem;margin-bottom:0.85rem;"><i class="fas fa-gear"></i></div>
+          <div class="svc-card-name" style="font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fff;">Mecánica General</div>
+          <div class="svc-card-desc" style="color:rgba(242,242,242,0.65);font-size:0.88rem;line-height:1.65;margin-top:0.5rem;">Revisión y reparación de motor, frenos, transmisión y suspensión. Atención para todas las marcas y modelos.</div>
+        </div>
+      </div>
+
+      <div class="svc-card anim anim-delay-2" style="background:#141414;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:visible;position:relative;transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;">
+        <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80" alt="Sistema Eléctrico" class="svc-card-img" style="filter:brightness(0.6);height:200px;object-fit:cover;width:100%;display:block;">
+        <div class="svc-card-body">
+          <div class="svc-card-icon" style="background:rgba(253,216,53,0.15);border:1px solid rgba(253,216,53,0.5);border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#ffd600;font-size:1.1rem;margin-bottom:0.85rem;"><i class="fas fa-bolt"></i></div>
+          <div class="svc-card-name" style="font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fff;">Sistema Eléctrico</div>
+          <div class="svc-card-desc" style="color:rgba(242,242,242,0.65);font-size:0.88rem;line-height:1.65;margin-top:0.5rem;">Diagnóstico con escáner multimarca, solución de fallas eléctricas y electrónicas. Corrección de códigos de error.</div>
+        </div>
+      </div>
+
+      <div class="svc-card anim anim-delay-3" style="background:#141414;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:visible;position:relative;transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Aire Acondicionado" class="svc-card-img" style="filter:brightness(0.6);height:200px;object-fit:cover;width:100%;display:block;">
+        <div class="svc-card-body">
+          <div class="svc-card-icon" style="background:rgba(66,165,245,0.15);border:1px solid rgba(66,165,245,0.5);border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#40c4ff;font-size:1.1rem;margin-bottom:0.85rem;"><i class="fas fa-wind"></i></div>
+          <div class="svc-card-name"  style="font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fff;">Aire Acondicionado</div>
+          <div class="svc-card-desc" style="color:rgba(242,242,242,0.65);font-size:0.88rem;line-height:1.65;margin-top:0.5rem;">Mantenimiento preventivo, recarga de gas refrigerante, reparación de compresor y sistema de climatización.</div>
+        </div>
+      </div>
+
+      <div class="svc-card anim anim-delay-1" style="background:#141414;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:visible;position:relative;transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;">
+        <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&q=80" alt="Latonería" class="svc-card-img" style="filter:brightness(0.6);height:200px;object-fit:cover;width:100%;display:block;">
+        <div class="svc-card-body">
+          <div class="svc-card-icon" style="background:rgba(255,112,67,0.15);border:1px solid rgba(255,112,67,0.5);border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#ff6e40;font-size:1.1rem;margin-bottom:0.85rem;"><i class="fas fa-car-side"></i></div>
+          <div class="svc-card-name" style="font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fff;">Latonería</div>
+          <div class="svc-card-desc" style="color:rgba(242,242,242,0.65);font-size:0.88rem;line-height:1.65;margin-top:0.5rem;">Reparación de carrocería, enderezado de láminas y corrección de daños por colisión con técnica profesional.</div>
+        </div>
+      </div>
+
+      <div class="svc-card anim anim-delay-2" style="background:#141414;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:visible;position:relative;transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;">
+        <img src="https://media.istockphoto.com/id/1337272787/photo/automobile-technician-painting-auto-with-spraying-gun.jpg?s=612x612&w=is&k=20&c=B1CKaRZMDLPzD_TLgN0qkNiI98LPMDtDyPFUkapVY9Q=" alt="Pintura" class="svc-card-img" style="filter:brightness(0.6);height:200px;object-fit:cover;width:100%;display:block;">
+        <div class="svc-card-body">
+          <div class="svc-card-icon" style="background:rgba(171,71,188,0.15);border:1px solid rgba(171,71,188,0.5);border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#e040fb;font-size:1.1rem;margin-bottom:0.85rem;"><i class="fas fa-spray-can-sparkles"></i></div>
+          <div class="svc-card-name" style="font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fff;">Pintura</div>
+          <div class="svc-card-desc" style="color:rgba(242,242,242,0.65);font-size:0.88rem;line-height:1.65;margin-top:0.5rem;">Pintura profesional en cabina especializada. Mezcla exacta de colores y acabados de alta calidad garantizados.</div>
+        </div>
+      </div>
+
+      <div class="svc-card anim anim-delay-3" style="background:#141414;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:visible;position:relative;transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;">
+        <img src="https://images.unsplash.com/photo-1599256872237-5dcc0fbe9668?w=600&q=80" alt="Repuestos" class="svc-card-img" style="filter:brightness(0.6);height:200px;object-fit:cover;width:100%;display:block;">
+        <div class="svc-card-body">
+          <div class="svc-card-icon" style="background:rgba(102,187,106,0.15);border:1px solid rgba(102,187,106,0.5);border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#69f0ae;font-size:1.1rem;margin-bottom:0.85rem;"><i class="fas fa-boxes-stacked"></i></div>
+          <div class="svc-card-name" style="font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fff;">Venta de Repuestos</div>
+          <div class="svc-card-desc" style="color:rgba(242,242,242,0.65);font-size:0.88rem;line-height:1.65;margin-top:0.5rem;">Repuestos originales y alternativos de alta calidad. Consulta disponibilidad y precios en nuestro inventario digital.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="mv-section" id="quienes-somos">
+  <div class="section-wrap">
+    <div class="mv-grid">
+      <div class="mv-text-col anim">
+        <div class="section-label"><span>Quiénes somos</span></div>
+        <h2 class="section-title">Más de una década<br>de confianza</h2>
+        <p class="mv-intro">Fundados por la familia Urueta, somos el taller automotriz de referencia en Montería. Combinamos experiencia artesanal con tecnología digital para ofrecerte el mejor servicio.</p>
+        <div class="mv-cards">
+          <div class="mv-card anim anim-delay-1">
+            <div class="mv-card-icon"><i class="fas fa-bullseye"></i></div>
+            <div class="mv-card-content">
+              <h4>Nuestra Misión</h4>
+              <p>Brindar mantenimiento automotriz integral con honestidad, calidad y rapidez, cuidando cada vehículo como si fuera propio y generando confianza duradera en nuestros clientes.</p>
+            </div>
+          </div>
+          <div class="mv-card anim anim-delay-2">
+            <div class="mv-card-icon"><i class="fas fa-eye"></i></div>
+            <div class="mv-card-content">
+              <h4>Nuestra Visión</h4>
+              <p>Ser el taller de referencia en Montería y la región, reconocido por su servicio digitalizado, atención cercana y soluciones efectivas para todo tipo de vehículos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mv-visual anim anim-delay-2">
+        <div class="why-stack">
+          <div class="why-item">
+            <div class="why-num">01</div>
+            <div class="why-content">
+              <div class="why-title"><i class="fas fa-shield-halved"></i> Trabajo confiable</div>
+              <div class="why-text">Repuestos originales y reparaciones con respaldo profesional garantizado en cada servicio.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-num">02</div>
+            <div class="why-content">
+              <div class="why-title"><i class="fas fa-clock"></i> Atención rápida</div>
+              <div class="why-text">Diagnóstico preciso y arreglo eficaz. Tu tiempo es valioso y lo respetamos.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-num">03</div>
+            <div class="why-content">
+              <div class="why-title"><i class="fas fa-hand-holding-dollar"></i> Precios claros</div>
+              <div class="why-text">Presupuestos honestos sin costos ocultos. Sabes exactamente qué pagas.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-num">04</div>
+            <div class="why-content">
+              <div class="why-title"><i class="fas fa-mobile-screen"></i> Seguimiento digital</div>
+              <div class="why-text">Consulta el estado de tu vehículo en tiempo real desde tu celular, 24/7.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN EQUIPO CON FOTO GRUPAL -->
+<section class="team-section" id="equipo">
+  <div class="section-wrap">
+    <div class="section-label anim"><span>Equipo humano</span></div>
+    <h2 class="section-title anim anim-delay-1">Las personas detrás<br>del taller</h2>
+    <p class="section-sub anim anim-delay-2" style="margin-bottom:3rem">Profesionales comprometidos con la calidad y el servicio al cliente</p>
+
+    <div class="team-grid">
+
+      <div class="team-card anim anim-delay-1">
+        <div class="team-photo-wrap">
+          <div class="team-photo" style="background:linear-gradient(135deg,#7f0000,#d62828);">
+            <span>OU</span>
+          </div>
+          <div class="team-photo-ring"></div>
+        </div>
+        <div class="team-info">
+          <h4>Óscar Urueta</h4>
+          <div class="team-role">Técnico Jefe &amp; Fundador</div>
+          <p>Especialista en motores y sistemas eléctricos con más de 15 años transformando el servicio automotriz en Montería.</p>
+          <div class="team-tags">
+            <span>Motores</span><span>Eléctrica</span><span>Fundador</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-card anim anim-delay-2">
+        <div class="team-photo-wrap">
+          <div class="team-photo" style="background:linear-gradient(135deg,#0d2b6b,#1565c0);">
+            <span>DU</span>
+          </div>
+          <div class="team-photo-ring"></div>
+        </div>
+        <div class="team-info">
+          <h4>Darío Urueta</h4>
+          <div class="team-role">Coordinador de Taller</div>
+          <p>Garantiza que cada servicio se entregue con la más alta calidad. Gestión de repuestos y atención al cliente.</p>
+          <div class="team-tags">
+            <span>Coordinación</span><span>Repuestos</span><span>Calidad</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-card anim anim-delay-3">
+        <div class="team-photo-wrap">
+          <div class="team-photo" style="background:linear-gradient(135deg,#1a4a1a,#2e7d32);">
+            <span>MA</span>
+          </div>
+          <div class="team-photo-ring"></div>
+        </div>
+        <div class="team-info">
+          <h4>María Alonso</h4>
+          <div class="team-role">Auxiliar Administrativa</div>
+          <p>El nexo entre el taller y los clientes. Gestiona citas, seguimientos y asegura que cada cliente sea atendido.</p>
+          <div class="team-tags">
+            <span>Gestión</span><span>Citas</span><span>Soporte</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contacto">
+  <div class="contact-bg-accent"></div>
+  <div class="section-wrap">
+    <div class="section-label anim"><span>Encuéntranos</span></div>
+    <h2 class="section-title anim anim-delay-1">Contacto y ubicación</h2>
+    <div class="contact-layout">
+      <div class="contact-panel anim anim-delay-1">
+        <div class="contact-info-block">
+          <div class="contact-info-icon"><i class="fas fa-location-dot"></i></div>
+          <div>
+            <div class="contact-info-label">Dirección</div>
+            <div class="contact-info-value">Calle 39 #1B-81<br>Montería, Córdoba, Colombia</div>
+          </div>
+        </div>
+        <div class="contact-info-block">
+          <div class="contact-info-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div class="contact-info-label">Horario de atención</div>
+            <div class="contact-info-value">Lunes a Sábado<br>7:00 AM – 6:00 PM</div>
+          </div>
+        </div>
+        <div class="contact-info-block">
+          <div class="contact-info-icon"><i class="fab fa-whatsapp"></i></div>
+          <div>
+            <div class="contact-info-label">WhatsApp</div>
+            <div class="contact-info-value">
+              <a href="https://wa.me/573003518699" target="_blank">300 351 8699</a><br>
+              <a href="https://wa.me/573205317694" target="_blank">320 531 7694</a>
+            </div>
+          </div>
+        </div>
+        <div class="contact-info-block">
+          <div class="contact-info-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="contact-info-label">Correo electrónico</div>
+            <div class="contact-info-value">
+              <a href="mailto:contacto@urueta.com.co">contacto@urueta.com.co</a>
+            </div>
+          </div>
+        </div>
+        <a href="https://wa.me/573003518699?text=Hola%2C%20quiero%20solicitar%20un%20servicio" target="_blank" class="cta-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+          <div>
+            <div class="cta-wa-title">Escríbenos por WhatsApp</div>
+            <div class="cta-wa-sub">Respuesta inmediata · Sin demoras</div>
+          </div>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+        <div class="social-panel">
+          <div class="social-panel-title">Síguenos en redes sociales</div>
+          <div class="social-panel-grid">
+            <a href="https://www.facebook.com/" target="_blank" class="soc-card soc-fb"><i class="fab fa-facebook-f"></i><span>Facebook</span></a>
+            <a href="https://wa.me/573003518699" target="_blank" class="soc-card soc-wa"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a>
+            <a href="https://www.instagram.com/" target="_blank" class="soc-card soc-ig"><i class="fab fa-instagram"></i><span>Instagram</span></a>
+            <a href="https://www.tiktok.com/@mecanicaautomotriz28?is_from_webapp=1&sender_device=pc" target="_blank" class="soc-card soc-tt"><i class="fab fa-tiktok"></i><span>TikTok</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="contact-map anim anim-delay-2">
+        <div class="map-header">
+          <i class="fas fa-map-location-dot"></i>
+          <span>Calle 39 #1B-81, Montería</span>
+        </div>
+        <div class="map-frame">
+          <iframe
+            src="https://maps.google.com/maps?q=Calle%2039%20%231B-81%20Monter%C3%ADa%20C%C3%B3rdoba&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <div class="map-footer">
+          <a href="https://maps.google.com/maps?q=Calle+39+%231B-81+Montería+Córdoba" target="_blank">
+            <i class="fas fa-external-link"></i> Abrir en Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+document.querySelectorAll('.svc-img-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -8;
+    const rotateY = ((x - centerX) / centerX) * 8;
+    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale(1.03)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+</script>
+
+{% endblock %}

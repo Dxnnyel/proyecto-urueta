@@ -1,0 +1,97 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Mi Panel — Urueta & Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .welcome-banner{
+    background:linear-gradient(135deg,var(--gris-2) 0%,rgba(215,43,43,0.08) 100%);
+    border:1px solid rgba(215,43,43,0.2);
+    border-left:4px solid var(--rojo);
+    border-radius:6px;padding:1.75rem 2rem;margin-bottom:2rem;
+    display:flex;align-items:center;gap:1.25rem;
+  }
+  .welcome-banner i{color:var(--rojo);font-size:28px}
+  .welcome-banner h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;text-transform:uppercase;color:#fff;margin:0 0 .2rem}
+  .welcome-banner p{color:var(--texto-2);margin:0;font-size:14px}
+
+  .servicios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;margin-bottom:2rem}
+  .servicio-card{background:var(--gris-2);border:1px solid var(--borde);border-radius:8px;padding:1.25rem 1rem;text-align:center;transition:border-color .2s,transform .2s}
+  .servicio-card:hover{border-color:var(--rojo);transform:translateY(-2px)}
+  .servicio-card i{font-size:28px;color:var(--rojo);display:block;margin-bottom:.6rem}
+  .servicio-card span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;color:#fff}
+
+  .accion-box{background:var(--gris-2);border:1px solid var(--borde);border-radius:8px;padding:1.75rem 2rem}
+  .accion-box h4{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;color:#fff;margin-bottom:.5rem}
+  .accion-box p{color:var(--texto-2);font-size:13px;margin-bottom:1.25rem;line-height:1.6}
+  .btn-group-acciones{display:flex;gap:.75rem;flex-wrap:wrap}
+</style>
+
+<div class="pt-4">
+
+  {# Bienvenida #}
+  <div class="welcome-banner">
+    <i class="fas fa-car"></i>
+    <div>
+      <h2>Bienvenido, {{ user.first_name|default:user.username }}</h2>
+      <p>Aquí puedes solicitar servicios y hacer seguimiento de tu vehículo.</p>
+    </div>
+  </div>
+
+  {# Servicios disponibles #}
+  <h5 style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);margin-bottom:1rem">
+    Servicios disponibles
+  </h5>
+  <div class="servicios-grid">
+    <div class="servicio-card">
+      <i class="fas fa-wrench"></i>
+      <span>Mecánica</span>
+    </div>
+    <div class="servicio-card">
+      <i class="fas fa-bolt"></i>
+      <span>Eléctrico</span>
+    </div>
+    <div class="servicio-card">
+      <i class="fas fa-wind"></i>
+      <span>Aire Acond.</span>
+    </div>
+    <div class="servicio-card">
+      <i class="fas fa-car-burst"></i>
+      <span>Latonería</span>
+    </div>
+    <div class="servicio-card">
+      <i class="fas fa-spray-can"></i>
+      <span>Pintura</span>
+    </div>
+  </div>
+
+  {# Acciones principales #}
+  <div class="row g-4">
+
+    <div class="col-lg-6">
+      <div class="accion-box">
+        <h4><i class="fas fa-calendar-plus me-2" style="color:var(--rojo)"></i>Agendar servicio</h4>
+        <p>Solicita una cita para tu vehículo. Elige el servicio, la fecha y hora que prefieras. El taller confirmará según disponibilidad.</p>
+        <div class="btn-group-acciones">
+          <a href="{% url 'nueva_solicitud' %}" class="btn-uu btn-uu-red">
+            <i class="fas fa-plus me-2"></i>Nueva solicitud
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="accion-box">
+        <h4><i class="fas fa-inbox me-2" style="color:var(--rojo)"></i>Mis solicitudes</h4>
+        <p>Revisa el estado de todas tus solicitudes. Si el taller propone otra fecha, podrás aceptarla o rechazarla desde aquí.</p>
+        <div class="btn-group-acciones">
+          <a href="{% url 'mis_solicitudes' %}" class="btn-uu btn-uu-outline">
+            <i class="fas fa-list me-2"></i>Ver solicitudes
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}  

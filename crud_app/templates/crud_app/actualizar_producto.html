@@ -1,0 +1,33 @@
+  {% extends 'crud_app/base.html' %}
+
+  {% block title %}Actualizar producto - Urueta{% endblock %}
+
+  {% block content %}
+  <style>
+  label { color: var(--texto-2) !important; font-size: 13px; }
+  input.form-control, textarea.form-control, select.form-control {
+    background: var(--carbon-4, #242424) !important;
+    border: 1px solid var(--borde) !important;
+    color: #fff !important;
+  }
+  input.form-control::placeholder, textarea.form-control::placeholder {
+    color: var(--texto-3) !important;
+  }
+  </style>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm p-4" style="background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde) !important">
+        <h2 class="mb-4" style="color:#fff">Actualizar producto</h2>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">Actualizar</button>
+            <a href="{% url 'lista_productos' %}" class="btn btn-outline-light">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endblock %}

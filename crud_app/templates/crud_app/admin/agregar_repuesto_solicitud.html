@@ -1,0 +1,158 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Repuestos — {{ solicitud.placa }}{% endblock %}
+
+{% block content %}
+<style>
+  .page-wrap{max-width:800px;margin:2.5rem auto;padding:0 1rem}
+  .card-form{background:var(--carbon-3,#1a1a1a);border:1px solid var(--borde);border-radius:8px;overflow:hidden;margin-bottom:1.5rem}
+  .card-section{padding:1.25rem 1.75rem;border-bottom:1px solid var(--borde)}
+  .card-section:last-child{border-bottom:none}
+  .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--texto-2);margin-bottom:1rem}
+  .placa-tag{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;letter-spacing:.12em;color:#fff}
+  .rep-row{display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--borde);gap:1rem}
+  .rep-row:last-child{border-bottom:none}
+  .rep-nombre{font-weight:600;font-size:14px;color:#fff}
+  .rep-detalle{font-size:12px;color:var(--texto-2);margin-top:2px}
+  .rep-cantidad{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:var(--rojo)}
+  .empty-rep{text-align:center;padding:1.75rem;color:var(--texto-2);font-size:13px}
+  .card-footer{padding:1.25rem 1.75rem;background:var(--carbon-2,#141414);display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+  .cerrar-box{background:rgba(72,199,142,.05);border:1px solid rgba(72,199,142,.2);border-radius:8px;padding:1.25rem 1.75rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  select.form-control{appearance:auto}
+  select.form-control option { background: #242424; color: #fff; }
+</style>
+
+<div class="page-wrap">
+
+  <div style="margin-bottom:1.5rem">
+    <a href="{% url 'admin_gestionar_solicitud' solicitud.pk %}" style="color:var(--texto-2);font-size:13px;text-decoration:none">
+      <i class="fas fa-arrow-left me-1"></i> Volver a la solicitud
+    </a>
+  </div>
+
+  <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;text-transform:uppercase;color:#fff;margin-bottom:.25rem">
+    Repuestos usados
+  </h2>
+  <p style="color:var(--texto-2);font-size:13px;margin-bottom:1.75rem">
+    Placa <strong style="color:#fff">{{ solicitud.placa }}</strong> ·
+    {{ solicitud.get_servicio_display }} · {{ solicitud.nombre }}
+  </p>
+
+  <!-- Formulario para agregar repuesto -->
+  {% if solicitud.estado != 'terminada' %}
+  <div class="card-form">
+    <form method="POST">
+      {% csrf_token %}
+      <div class="card-section">
+        <div class="section-label">Agregar repuesto</div>
+        <div class="mb-3">
+          <label class="form-label">Repuesto</label>
+          <select class="form-control" name="producto_id" id="selProducto" required>
+            <option value="">-- Selecciona un repuesto --</option>
+            {% for p in productos %}
+            <option value="{{ p.pk }}" data-stock="{{ p.cantidad }}">
+              {{ p.nombre }} — Stock: {{ p.cantidad }} uds
+            </option>
+            {% endfor %}
+          </select>
+          <div id="stockInfo" style="margin-top:5px;font-size:12px;color:#48c78e;display:none">
+            Disponible: <span id="stockNum"></span> unidades
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Cantidad</label>
+            <input type="number" class="form-control" name="cantidad" min="1" value="1" required>
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Observación <span style="color:var(--texto-3)">(opcional)</span></label>
+            <input type="text" class="form-control" name="observacion" placeholder="Ej: cambio de aceite motor">
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-size:12px;color:var(--texto-2)">El stock se descuenta al agregar</span>
+        <button type="submit" class="btn-uu btn-uu-red">
+          <i class="fas fa-plus me-2"></i>Agregar repuesto
+        </button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- Lista de repuestos ya registrados -->
+  <div class="card-form">
+    <div class="card-section">
+      <div class="section-label">Repuestos registrados en este servicio</div>
+      {% if repuestos_usados %}
+        {% for m in repuestos_usados %}
+        <div class="rep-row">
+          <div>
+            <div class="rep-nombre">{{ m.producto.nombre }}</div>
+            <div class="rep-detalle">
+              {{ m.fecha|date:"d/m/Y H:i" }}
+              {% if m.observacion %} · {{ m.observacion }}{% endif %}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem;flex-shrink:0">
+            <div class="rep-cantidad">{{ m.cantidad }} uds</div>
+            <form method="POST" action="{% url 'eliminar_repuesto_solicitud' m.pk %}">
+              {% csrf_token %}
+              <button type="submit" style="background:transparent;border:none;color:#ff6b6b;cursor:pointer;font-size:13px"
+                onclick="return confirm('¿Eliminar este repuesto? El stock será restaurado.')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-rep">
+          <i class="fas fa-box-open" style="font-size:32px;display:block;margin-bottom:.75rem;color:var(--texto-3)"></i>
+          Aún no hay repuestos registrados para este servicio.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Cerrar servicio -->
+  {% if solicitud.estado != 'terminada' %}
+  <div class="cerrar-box">
+    <div>
+      <strong style="color:#48c78e;font-size:14px"><i class="fas fa-check-circle me-1"></i>¿Servicio completado?</strong>
+      <p style="color:var(--texto-2);font-size:13px;margin:.3rem 0 0">
+        Al cerrar, el cliente verá el comprobante con todos los repuestos desde su panel.
+      </p>
+    </div>
+    <form method="POST" action="{% url 'cerrar_servicio' solicitud.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn-uu btn-uu-red"
+        onclick="return confirm('¿Confirmas que el servicio está terminado?')">
+        <i class="fas fa-flag-checkered me-2"></i>Cerrar servicio
+      </button>
+    </form>
+  </div>
+  {% elif solicitud.estado == 'terminada' %}
+  <div style="background:rgba(240,196,64,.06);border:1px solid rgba(240,196,64,.2);border-radius:8px;padding:1rem 1.5rem;font-size:13px;color:#f0c040">
+    <i class="fas fa-check-circle me-1"></i>
+    Servicio cerrado. El cliente ya puede ver su comprobante.
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+const sel = document.getElementById('selProducto');
+if(sel){
+  sel.addEventListener('change', function(){
+    const opt = this.options[this.selectedIndex];
+    const info = document.getElementById('stockInfo');
+    if(this.value){
+      document.getElementById('stockNum').textContent = opt.dataset.stock;
+      info.style.display = 'block';
+    } else {
+      info.style.display = 'none';
+    }
+  });
+}
+</script>
+{% endblock %}

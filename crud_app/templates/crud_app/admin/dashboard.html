@@ -1,0 +1,222 @@
+{% extends 'crud_app/base.html' %}
+{% block title %}Panel Administrador — Urueta{% endblock %}
+
+{% block content %}
+<style>
+  .action-card {
+    background: var(--gris-2);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    text-decoration: none;
+    transition: border-color .25s, background .25s, transform .25s;
+    height: 100%;
+  }
+  .action-card:hover {
+    border-color: rgba(215,43,43,0.5);
+    background: rgba(215,43,43,0.05);
+    transform: translateY(-3px);
+  }
+  .action-icon {
+    width: 52px; height: 52px;
+    background: rgba(215,43,43,0.1);
+    border: 1px solid rgba(215,43,43,0.25);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .action-icon i { color: var(--rojo); font-size: 20px; }
+  .action-info { min-width: 0; }
+  .action-info strong {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #fff;
+    display: block;
+  }
+  .action-info span { color: var(--texto-2); font-size: 13px; }
+  .action-card i.fa-chevron-right { color: var(--gris-4); margin-left: auto; flex-shrink: 0; transition: color .2s; }
+  .action-card:hover i.fa-chevron-right { color: var(--rojo); }
+
+  .action-card.destacada {
+    border-color: rgba(240,196,64,0.3);
+    background: rgba(240,196,64,0.04);
+  }
+  .action-card.destacada:hover {
+    border-color: rgba(240,196,64,0.6);
+    background: rgba(240,196,64,0.08);
+  }
+  .action-card.destacada .action-icon {
+    background: rgba(240,196,64,0.1);
+    border-color: rgba(240,196,64,0.3);
+  }
+  .action-card.destacada .action-icon i { color: #f0c040; }
+  .action-card.destacada i.fa-chevron-right { color: #f0c040; }
+
+  .badge-pendientes {
+    background: #f0c040;
+    color: #1a1a1a;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-left: .5rem;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--texto-2);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--borde);
+  }
+</style>
+
+<div class="pt-4 pb-2">
+  <div class="page-header">
+    <div class="red-tag"><i class="fas fa-gauge-high me-1"></i> Panel de Control</div>
+    <h1>Bienvenido, {{ user.username }}</h1>
+    <p>Gestiona vehículos, historial e inventario desde aquí.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-2">
+      <div class="stat-card">
+        <div class="stat-label">En proceso</div>
+        <div class="stat-number" style="color:var(--rojo)">{{ en_proceso }}</div>
+        <i class="fas fa-wrench stat-icon"></i>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="stat-card">
+        <div class="stat-label">Terminados</div>
+        <div class="stat-number" style="color:#48c78e">{{ terminadas }}</div>
+        <i class="fas fa-flag-checkered stat-icon"></i>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="stat-card">
+        <div class="stat-label">Productos</div>
+        <div class="stat-number">{{ total_productos }}</div>
+        <i class="fas fa-boxes-stacked stat-icon"></i>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="stat-card">
+        <div class="stat-label">Bajo stock</div>
+        <div class="stat-number" style="color:#f0c040">{{ productos_bajo_stock }}</div>
+        <i class="fas fa-triangle-exclamation stat-icon"></i>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="stat-card">
+        <div class="stat-label">Solicitudes</div>
+        <div class="stat-number" style="color:#4fc3f7">{{ total_solicitudes }}</div>
+        <i class="fas fa-calendar-check stat-icon"></i>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="stat-card">
+        <div class="stat-label">Pendientes</div>
+        <div class="stat-number" style="color:#f0c040">{{ solicitudes_pendientes }}</div>
+        <i class="fas fa-clock stat-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCIONES RÁPIDAS -->
+  <div class="section-title">Acciones rápidas</div>
+  <div class="row g-3 mb-4">
+
+    <!-- SOLICITUDES — destacada arriba -->
+    <div class="col-md-4">
+      <a href="{% url 'admin_solicitudes' %}" class="action-card destacada">
+        <div class="action-icon"><i class="fas fa-list-check"></i></div>
+        <div class="action-info">
+          <strong>
+            Solicitudes
+            {% if solicitudes_pendientes > 0 %}
+            <span class="badge-pendientes">{{ solicitudes_pendientes }} nuevas</span>
+            {% endif %}
+          </strong>
+          <span>Gestionar citas de clientes</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="{% url 'crear_producto' %}" class="action-card">
+        <div class="action-icon"><i class="fas fa-plus-circle"></i></div>
+        <div class="action-info">
+          <strong>Agregar producto</strong>
+          <span>Nuevo ítem al inventario</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="{% url 'historial_vehiculos' %}" class="action-card">
+        <div class="action-icon"><i class="fas fa-clock-rotate-left"></i></div>
+        <div class="action-info">
+          <strong>Ver historial</strong>
+          <span>Todos los servicios</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="{% url 'buscar_vehiculo' %}" class="action-card">
+        <div class="action-icon"><i class="fas fa-search"></i></div>
+        <div class="action-info">
+          <strong>Buscar por placa</strong>
+          <span>Consultar un auto</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="{% url 'inventario' %}" class="action-card">
+        <div class="action-icon"><i class="fas fa-magnifying-glass"></i></div>
+        <div class="action-info">
+          <strong>Buscar repuesto</strong>
+          <span>Consultar stock</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="{% url 'lista_productos' %}" class="action-card">
+        <div class="action-icon"><i class="fas fa-list"></i></div>
+        <div class="action-info">
+          <strong>Lista de productos</strong>
+          <span>Editar o eliminar</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
