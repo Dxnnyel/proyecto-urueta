@@ -1792,3 +1792,72 @@ img, svg { max-width: 100%; display: block; }
 @media (max-width: 600px) {
   .svc-card-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ═══ RESPONSIVE MÓVIL ═══ */
+@media (max-width: 768px) {
+
+    /* Tabla deslizable */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Botones que se cortan */
+    .btn-uu-red, .btn-danger, .btn-uu {
+        white-space: nowrap;
+        font-size: 0.78rem !important;
+        padding: 0.7rem 1rem !important;
+    }
+
+    /* Grids en móvil */
+    .servicios-grid-imgs,
+    [style*="grid-template-columns: repeat(3"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+/* ═══ FIXES MÓVIL ═══ */
+@media (max-width: 768px) {
+
+    /* Tabla deslizable */
+    .card-block {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Botones de acción en tabla */
+    .btn-uu-outline, .btn-danger {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 11px !important;
+        white-space: nowrap;
+    }
+
+    /* Botón agregar al inventario */
+    .btn-uu-red {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Servicios en móvil 1 columna */
+    [style*="grid-template-columns:repeat(3,1fr)"],
+    [style*="grid-template-columns: repeat(3, 1fr)"] {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Hero stats en móvil */
+    .hero-stats {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    /* Page container padding móvil */
+    .page-container {
+        padding: 1rem 1rem;
+    }
+
+    /* Team grid 1 columna */
+    .team-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 100% !important;
+    }
+}
