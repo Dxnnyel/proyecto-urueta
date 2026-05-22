@@ -59,21 +59,31 @@ TEMPLATES = [
 WSGI_APPLICATION = 'proyecto_UCC.wsgi.application'
 
 import os
+import dj_database_url
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQLDATABASE', 'urueta_db'),
-        'USER': os.environ.get('MYSQLUSER', 'urueta_user'),
-        'PASSWORD': os.environ.get('MYSQLPASSWORD', 'Urueta&29'),
-        'HOST': os.environ.get('MYSQLHOST', 'localhost'),
-        'PORT': os.environ.get('MYSQLPORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+MYSQL_PUBLIC_URL = os.environ.get('MYSQL_PUBLIC_URL')
+
+if MYSQL_PUBLIC_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(MYSQL_PUBLIC_URL)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME':     'urueta_db',
+            'USER':     'urueta_user',
+            'PASSWORD': 'Urueta&29',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
+
+    
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
