@@ -60,20 +60,29 @@ WSGI_APPLICATION = 'proyecto_UCC.wsgi.application'
 
 import os
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQLDATABASE'),
-        'USER': os.environ.get('MYSQLUSER'),
-        'PASSWORD': os.environ.get('MYSQLPASSWORD'),
-        'HOST': os.environ.get('MYSQLHOST'),
-        'PORT': os.environ.get('MYSQLPORT'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+# Base de datos — local o Railway
+MYSQL_PUBLIC_URL = os.environ.get('MYSQL_PUBLIC_URL')
+
+if MYSQL_PUBLIC_URL:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(MYSQL_PUBLIC_URL)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME':     'urueta_db',
+            'USER':     'urueta_user',
+            'PASSWORD': 'Urueta&29',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
